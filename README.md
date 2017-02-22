@@ -12,3 +12,7 @@ sudo apt install python-mysql.connector
 
 TO DO
 
+Run the app ( on port 8888 )
+```
+python radon.py
+```
