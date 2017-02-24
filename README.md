@@ -30,7 +30,8 @@ now copy or move the config file
 mv config.ini.sample config.ini
 ```
 
-Dont't forget to edit config.ini and replace your own config details
+Dont't forget to edit config.ini and replace your own config details 
+so that the app has access to the database created from geochem_TABOO_DB_v2.3_withdata.sql
 
 Now run the app
 ```
