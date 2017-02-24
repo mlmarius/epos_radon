@@ -71,25 +71,46 @@ class RequestManagerRadon(object):
 
         rq.addPostValidator(v.ValidatorPostSmaller('minlon', 'maxlon'))
 
+
         RequestParam('min_period',
                      unit='period, according to the standard',
                      name='minimum "sampling period" allowed to extract data',
                      description='''the period is a setup of each station and defines the time interval between one measure and another
-                     standard reference:  ISO 8601 (P[n]Y[n]M[n]DT[n]H[n]M[n]S)
+                     in seconds
                      ''',
-                     default='PT60M',
-                     validators=[v.ValidatorRegex(r"^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$")]
+                     default='3600',   # 1 hour
+                     validators=[v.ValidatorFloat()]
                      ).addTo(rq)
 
         RequestParam('max_period',
                      unit='period, according to the standard',
                      name='maximum "sampling period" allowed to extract data',
                      description='''the period is a setup of each station and defines the time interval between one measure and another
-                     standard reference:  ISO 8601 (P[n]Y[n]M[n]DT[n]H[n]M[n]S)
+                     in seconds
                      ''',
-                     default='PT1D',
-                     validators=[v.ValidatorRegex(r"^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$")]
+                     default='86400',  # 1 day
+                     validators=[v.ValidatorFloat()]
                      ).addTo(rq)
+
+        # RequestParam('min_period',
+        #              unit='period, according to the standard',
+        #              name='minimum "sampling period" allowed to extract data',
+        #              description='''the period is a setup of each station and defines the time interval between one measure and another
+        #              standard reference:  ISO 8601 (P[n]Y[n]M[n]DT[n]H[n]M[n]S)
+        #              ''',
+        #              default='PT60M',
+        #              validators=[v.ValidatorRegex(r"^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$")]
+        #              ).addTo(rq)
+        #
+        # RequestParam('max_period',
+        #              unit='period, according to the standard',
+        #              name='maximum "sampling period" allowed to extract data',
+        #              description='''the period is a setup of each station and defines the time interval between one measure and another
+        #              standard reference:  ISO 8601 (P[n]Y[n]M[n]DT[n]H[n]M[n]S)
+        #              ''',
+        #              default='PT1D',
+        #              validators=[v.ValidatorRegex(r"^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$")]
+        #              ).addTo(rq)
 
         RequestParam('type_site',
                      default='all',
@@ -108,12 +129,21 @@ class RequestManagerRadon(object):
 
         RequestParam('max_int_delta',
                      unit='period, according to the standard',
-                     default='PT3600S',
+                     default='3600',
                      name='maximum distance in time between internal temperature measure timing and correspondent Rn measure time',
                      description='''internal temperature timing can be different from that of Rn, so temperature measure are referred to Rn measure if time distance is <=  max_int_delta; mean temperature value is given as input referred to the Rn measure
-                     standard reference:   ISO 8601 (P[n]Y[n]M[n]DT[n]H[n]M[n]S)''',
-                     validators=[v.ValidatorRegex(r"^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$")]
+                     in seconds''',
+                     validators=[v.ValidatorFloat()]
                      ).addTo(rq)
+
+        # RequestParam('max_int_delta',
+        #              unit='period, according to the standard',
+        #              default='PT3600S',
+        #              name='maximum distance in time between internal temperature measure timing and correspondent Rn measure time',
+        #              description='''internal temperature timing can be different from that of Rn, so temperature measure are referred to Rn measure if time distance is <=  max_int_delta; mean temperature value is given as input referred to the Rn measure
+        #              standard reference:   ISO 8601 (P[n]Y[n]M[n]DT[n]H[n]M[n]S)''',
+        #              validators=[v.ValidatorRegex(r"^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$")]
+        #              ).addTo(rq)
 
         self.rq = rq
 

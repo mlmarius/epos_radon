@@ -32,11 +32,6 @@ class MainHandler(handler.APIBaseHandler):
             args['max_period'] = 180
             args['max_int_delta'] = 3600
 
-            # db = _mysql.connect(self.config.get('db', 'host'),
-            #                     self.config.get('db', 'user'),
-            #                     self.config.get('db', 'pass'),
-            #                     self.config.get('db', 'db'))
-
             cnx = mysql.connector.connect(user=self.config.get('db', 'user'),
                                           password=self.config.get('db', 'pass'),
                                           database=self.config.get('db', 'db'),
@@ -101,38 +96,21 @@ installation_type,
 value_time,
 radon_value,
 radon_error
-
-
             '''.format(**args)
 
             for result in cursor.execute(query, multi=True):
                 if result.with_rows:
-                    print("Rows produced by statement '{}':".format(result.statement))
-                    # print(result.fetchall())
+                    # print("Rows produced by statement '{}':".format(result.statement))
                     resp = self.render_string('response.json', result=json.dumps(result.fetchall(), cls=DecimalEncoder))
                     self.write(resp)
                     self.set_header('Content-Type', 'application/json')
                     return
                 else:
-                    print("Number of rows affected by statement '{}': {}".format(
-                    result.statement, result.rowcount))
-
-
+                    # this is the temptable query response
+                    pass
+                    # print("Number of rows affected by statement '{}': {}".format(result.statement, result.rowcount))
             return
 
-            # uncomment lines 75, 76 in order to echo the query to the screen and stop
-            # self.send_success_response(query)
-            # return
-
-            # db.query(query)
-            # rs = db.store_result()
-            # self.send_success_response(json.dumps(dict(result=rs.fetch_row(maxrows=0, how=1))))
-            # db.close()
-
-            resp = self.render_string('response.json', result=json.dumps(rs.fetch_row(maxrows=0, how=1)))
-            self.write(resp)
-            self.set_header('Content-Type', 'application/json')
-            return
         else:
             errors = [e.message for e in user_request.global_errors] + [ e.message for (p, e) in user_request.errors ]
             return self.send_error_response(errors)
@@ -151,8 +129,10 @@ class IndexHandler(tornado.web.RequestHandler):
             maxlon=12.80,
             mintime='2010-03-01T00:00:00.000',
             maxtime='2011-05-01T00:00:00.000',
-            min_period='PT60S',
-            max_period='PT180S',
+            # min_period='PT60S',
+            # max_period='PT180S',
+            min_period='60',
+            max_period='180',
             type_site='indoor'
         ))
 
@@ -163,7 +143,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
         manager = RequestManagerRadon()
 
-        self.render('vpvs_index.html', queries=queries, manager=manager)
+        self.render('index.html', queries=queries, manager=manager)
 
 if __name__ == "__main__":
 
@@ -179,5 +159,5 @@ if __name__ == "__main__":
         (r"/", IndexHandler),
         (r"/query", MainHandler, dict(config=cfg))
     ], **settings)
-    application.listen(8888)
+    application.listen(cfg.get('service','port'))
     tornado.ioloop.IOLoop.current().start()
