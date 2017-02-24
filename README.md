@@ -37,4 +37,4 @@ Now run the app
 python radon.py
 ```
 
-You should now be able to access the app on port 8888
+You should now be able to access the app on port 8888 or your configured service port
