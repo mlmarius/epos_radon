@@ -49,12 +49,14 @@ docker build -t base_radon .
 
 ### Running the image
 
-The image will use the following environment variables if available. Database configuration is mandatory.docker
+The image will use the following environment variables if available. Database configuration is mandatory.
+
+Example docker container built from image. App will be accessible on port 8888, localhost.
 
 ```
-docker run -d -e EP_DB_HOST='db_host' \
--e EP_DB_USER='db_user' \
+docker run -e EP_DB_HOST='db_seismo' \
+-e EP_DB_USER='root' \
 -e EP_DB_PASS='db_pass' \
--e EP_DB_NAME='db_name' \
---name test base_radon
+-e EP_DB_DB='geochem_taboo' \
+--link db_seismo:db_seismo -p 8888:8888 -d --name epos_radon base_radon
 ```
