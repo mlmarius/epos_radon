@@ -7,8 +7,10 @@ from request_manager_radon import RequestManagerRadon
 import mysql.connector
 import json
 from ConfigParser import ConfigParser
-
+import os
 import decimal
+
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
@@ -112,7 +114,7 @@ radon_error
             return
 
         else:
-            errors = [e.message for e in user_request.global_errors] + [ e.message for (p, e) in user_request.errors ]
+            errors = [e.message for e in user_request.global_errors] + [e.message for (p, e) in user_request.errors]
             return self.send_error_response(errors)
 
 
@@ -147,8 +149,20 @@ class IndexHandler(tornado.web.RequestHandler):
 
 if __name__ == "__main__":
 
-    cfg = ConfigParser()
+    defaults = dict(port=8888)
+
+    cfg = ConfigParser(defaults)
     cfg.read('config.ini')
+
+    # if environment configuration is present then override whatever there is
+    # usefull for overriding configuration in Docker mode
+    # environment variables should look like this EP_SECTIONNAME_VARNAME_HERE='value'
+    env_config = {key[3:].lower(): val for key, val in os.environ.items() if key.startswith('ET_')}
+    for k, v in env_config.items():
+        keyparts = k.split('_')
+        sectionname = keyparts[0]
+        varname = '_'.join(keyparts[1:])
+        cfg.set(sectionname, varname, v)
 
     settings = dict(
         debug=True,
@@ -159,5 +173,5 @@ if __name__ == "__main__":
         (r"/", IndexHandler),
         (r"/query", MainHandler, dict(config=cfg))
     ], **settings)
-    application.listen(cfg.get('service','port'))
+    application.listen(cfg.get('service', 'port'))
     tornado.ioloop.IOLoop.current().start()

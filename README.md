@@ -39,3 +39,22 @@ python radon.py
 ```
 
 You should now be able to access the app on port 8888 or your configured service port
+
+## Docker
+
+### Building the image
+```
+docker build -t base_radon .
+```
+
+### Running the image
+
+The image will use the following environment variables if available. Database configuration is mandatory.docker
+
+```
+docker run -d -e EP_DB_HOST='db_host' \
+-e EP_DB_USER='db_user' \
+-e EP_DB_PASS='db_pass' \
+-e EP_DB_NAME='db_name' \
+--name test base_radon
+```
