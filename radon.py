@@ -157,7 +157,7 @@ if __name__ == "__main__":
     # if environment configuration is present then override whatever there is
     # usefull for overriding configuration in Docker mode
     # environment variables should look like this EP_SECTIONNAME_VARNAME_HERE='value'
-    env_config = {key[3:].lower(): val for key, val in os.environ.items() if key.startswith('ET_')}
+    env_config = {key[3:].lower(): val for key, val in os.environ.items() if key.startswith('EP_')}
     for k, v in env_config.items():
         keyparts = k.split('_')
         sectionname = keyparts[0]
